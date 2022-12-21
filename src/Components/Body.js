@@ -1,16 +1,13 @@
 import React from "react";
 import { ItemCard } from "./ItemCard";
-export const Body = ({ items }) => {
+export const Body = ({ items, handleClick }) => {
     return (
         <div className="body">
             {items.map((item) => (
-                <ItemCard
-                    key={item.id}
-                    title={item.title}
-                    imgUrl={item.image}
-                />
+                <ItemCard item={item} key={item.id} handleClick={handleClick} />
             ))}
         </div>
     );
 };
+
 

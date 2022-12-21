@@ -1,13 +1,12 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-
-export const ItemCard = ({ item, handleClick }) => {
+export const CartItem = ({ item }) => {
     const { image, title, price } = item;
     return (
-        <div className="card">
+        <div className="cart-item">
             <img src={image} />
-            <div className="description">
+            <div className="cart-item-description">
                 <div>
                     <span>Title: {title}</span>
                 </div>
@@ -16,7 +15,7 @@ export const ItemCard = ({ item, handleClick }) => {
                 </div>
             </div>
             <div>
-                <button onClick={() => handleClick(item)}>
+                <button>
                     <FontAwesomeIcon icon={faPlus} />
                 </button>
             </div>

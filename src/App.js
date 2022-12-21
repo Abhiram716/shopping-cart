@@ -1,30 +1,37 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import {Header} from "./Components/Header";
-import {Body} from "./Components/Body";
-import './App.css';
+import { Shop } from "./Components/Shop";
+import { Cart } from "./Components/Cart";
+import "./App.css";
+import { useState } from "react";
+import { Header } from "./Components/Header";
+import { Route, Routes } from "react-router-dom";
 
 export default function App() {
-    const [items, setItems] = useState([]);
+    const [cart, setCart] = useState([]);
 
-    const fetchData = async () => {
-      fetch("https://fakestoreapi.com/products")
-          .then((res) => res.json())
-          .then((data) => setItems(data));
+    const handleClick = (item) => {
+        let isPresent = false;
+
+        cart.forEach((product) => {
+            if (item.id === product.id) {
+                isPresent = true;
+            }
+        });
+
+        if (isPresent) {
+            return;
+        }
+
+        setCart([...cart, item]);
     };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     return (
         <div className="app">
-          <div className="header-container">
-              <Header/>
-          </div>
-          <div>
-            <Body items={items}/>
-          </div>
+            <Header />
+            <Routes>
+                <Route path="/" element={<Shop handleClick={handleClick} />} />
+                <Route path="/Cart" element={<Cart cart={cart} />} />
+            </Routes>
         </div>
     );
 }
