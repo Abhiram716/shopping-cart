@@ -1,6 +1,6 @@
 import React from "react";
 import { ItemCard } from "./ItemCard";
-export const Body = ({ items, handleClick }) => {
+export default const Body = ({ items, handleClick }) => {
     return (
         <div className="body">
             {items.map((item) => (
