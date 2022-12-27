@@ -1,8 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import {Body}  from "./Body";
+import Body  from "./Body";
 
-export const Shop = ({ handleClick }) => {
+export default const Shop = ({ handleClick }) => {
     const [items, setItems] = useState([]);
 
     const fetchData = async () => {
