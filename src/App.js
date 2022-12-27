@@ -1,10 +1,11 @@
 import React from "react";
+import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import { Shop } from "./Components/Shop";
 import { Cart } from "./Components/Cart";
-import "./App.css";
-import { useState } from "react";
 import { Header } from "./Components/Header";
-import { Route, Routes } from "react-router-dom";
+import "./App.css";
+
 
 export default function App() {
     const [cart, setCart] = useState([]);
