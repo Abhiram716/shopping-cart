@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { Shop } from "./Components/Shop";
+import { Cart } from "./Components/Cart";
+import { Header } from "./Components/Header";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+export default function App() {
+    const [cart, setCart] = useState([]);
+
+    const handleClick = (item) => {
+        let isPresent = false;
+
+        cart.forEach((product) => {
+            if (item.id === product.id) {
+                isPresent = true;
+            }
+        });
+
+        if (isPresent) {
+            return;
+        }
+
+        setCart([...cart, item]);
+    };
+
+    return (
+        <div className="app">
+            <Header />
+            <Routes>
+                <Route path="/" element={<Shop handleClick={handleClick} />} />
+                <Route path="/Cart" element={<Cart cart={cart} />} />
+            </Routes>
+        </div>
+    );
 }
 
-export default App;
+
