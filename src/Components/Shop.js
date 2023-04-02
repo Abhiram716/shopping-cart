@@ -1,8 +1,7 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import Body  from "./Body";
+import React, { useEffect, useState } from "react";
+import Body from "./Body";
 
-export default const Shop = ({ handleClick }) => {
+const Shop = ({ handleClick }) => {
     const [items, setItems] = useState([]);
 
     const fetchData = async () => {
@@ -15,11 +14,11 @@ export default const Shop = ({ handleClick }) => {
         fetchData();
     }, []);
 
-
     return (
         <div>
-            <Body items = {items} handleClick={ handleClick }/>
+            <Body items={items} handleClick={handleClick} />
         </div>
     );
 };
 
+export default Shop;

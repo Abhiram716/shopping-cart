@@ -1,6 +1,6 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
 export const CartItem = ({ item }) => {
     const { image, title, price } = item;
     return (
@@ -22,5 +22,3 @@ export const CartItem = ({ item }) => {
         </div>
     );
 };
-
-
