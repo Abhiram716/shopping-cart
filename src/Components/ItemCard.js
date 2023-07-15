@@ -1,25 +1,24 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AiOutlinePlus } from "react-icons/ai";
 import React from "react";
 
 export const ItemCard = ({ item, handleClick }) => {
-    const { image, title, price } = item;
-    return (
-        <div className="card">
-            <img src={image} />
-            <div className="description">
-                <div>
-                    <span>Title: {title}</span>
-                </div>
-                <div>
-                    <span>Price: {price}USD</span>
-                </div>
-            </div>
-            <div>
-                <button onClick={() => handleClick(item)}>
-                    <FontAwesomeIcon icon={faPlus} />
-                </button>
-            </div>
+  const { image, title, price } = item;
+  return (
+    <div className="card">
+      <img src={image} />
+      <div className="description">
+        <div>
+          <span>Title: {title}</span>
         </div>
-    );
+        <div>
+          <span>Price: {price}USD</span>
+        </div>
+      </div>
+      <div>
+        <button onClick={() => handleClick(item)}>
+          <AiOutlinePlus />
+        </button>
+      </div>
+    </div>
+  );
 };
