@@ -6,7 +6,7 @@ export const ItemCard = ({ item, handleClick }) => {
     const { image, title, price } = item;
     return (
         <div className="card">
-            <img src={image} />
+            <img src={image} alt=""/>
             <div className="description">
                 <div>
                     <span>Title: {title}</span>
