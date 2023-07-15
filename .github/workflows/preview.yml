@@ -38,38 +38,37 @@ jobs:
           folder: build
 
       - name: Add preview link to pull request description
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.CUSTOM_SECRETS }}
-          script: |
-            const previewLink = `Preview URL: ${{ steps.deploy_preview.outputs.url }}`;
-            const { owner, repo } = context.repo;
-            const { number } = context.payload.pull_request;
+        run: |
+          const { GitHub } = require('@actions/github');
 
-            const octokit = context.octokit;
+          const octokit = new GitHub(process.env.GITHUB_TOKEN);
 
-            octokit.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number: number
-            }).then(({ data: comments }) => {
-              const existingComment = comments.find(
-                comment => comment.user.login === 'github-actions[bot]'
-              );
+          const previewLink = `Preview URL: ${{ steps.deploy_preview.outputs.url }}`;
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/'); // Split owner and repo
+          const { number } = context.payload.pull_request;
 
-              if (existingComment) {
-                octokit.rest.issues.updateComment({
-                  owner,
-                  repo,
-                  comment_id: existingComment.id,
-                  body: previewLink
-                });
-              } else {
-                octokit.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number: number,
-                  body: previewLink
-                });
-              }
-            });
+          octokit.rest.issues.listComments({
+            owner,
+            repo,
+            issue_number: number
+          }).then(({ data: comments }) => {
+            const existingComment = comments.find(
+              comment => comment.user.login === 'github-actions[bot]'
+            );
+
+            if (existingComment) {
+              octokit.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body: previewLink
+              });
+            } else {
+              octokit.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: number,
+                body: previewLink
+              });
+            }
+          });
