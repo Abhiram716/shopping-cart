@@ -29,7 +29,6 @@ jobs:
         run: echo "::set-output name=closed::$(echo ${GITHUB_EVENT_NAME} == 'pull_request' && echo ${GITHUB_EVENT_ACTION} == 'closed')"
 
       - name: Build React app
-        id: build
         run: npm run build
         if: steps.check_pr.outputs.closed != 'true'
 
@@ -48,12 +47,12 @@ jobs:
           script: |
             const previewLink = `Preview URL: ${{ steps.deploy_preview.outputs.url }}`;
             const { owner, repo } = context.repo;
-            const { number } = context.issue;
+            const { number } = context.payload.pull_request;
 
             const { Octokit } = require("@octokit/core");
             const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-            octokit.rest.issues.listComments({
+            octokit.request('GET /repos/{owner}/{repo}/issues/{issue_number}/comments', {
               owner,
               repo,
               issue_number: number,
@@ -65,14 +64,14 @@ jobs:
               );
 
               if (comment) {
-                octokit.rest.issues.updateComment({
+                octokit.request('PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}', {
                   owner,
                   repo,
                   comment_id: comment.id,
                   body: previewLink,
                 });
               } else {
-                octokit.rest.issues.createComment({
+                octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/comments', {
                   owner,
                   repo,
                   issue_number: number,
