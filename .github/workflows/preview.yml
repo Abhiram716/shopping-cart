@@ -29,6 +29,7 @@ jobs:
         run: echo "::set-output name=closed::$(echo ${GITHUB_EVENT_NAME} == 'pull_request' && echo ${GITHUB_EVENT_ACTION} == 'closed')"
 
       - name: Build React app
+        id: build
         run: npm run build
         if: steps.check_pr.outputs.closed != 'true'
 
@@ -45,25 +46,37 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const previewLink = `Preview URL: ${steps.deploy_preview.outputs.url}`;
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: previewLink
-            })
-            github.issues.listComments({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            }).then((response) => {
-              const comment = response.data.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.includes('Preview URL:'));
+            const previewLink = `Preview URL: ${{ steps.deploy_preview.outputs.url }}`;
+            const { owner, repo } = context.repo;
+            const { number } = context.issue;
+
+            const { Octokit } = require("@octokit/core");
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+            octokit.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number: number,
+            }).then(({ data: comments }) => {
+              const comment = comments.find(
+                (comment) =>
+                  comment.user.login === "github-actions[bot]" &&
+                  comment.body.includes("Preview URL:")
+              );
+
               if (comment) {
-                github.issues.updateComment({
+                octokit.rest.issues.updateComment({
+                  owner,
+                  repo,
                   comment_id: comment.id,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: previewLink
+                  body: previewLink,
+                });
+              } else {
+                octokit.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: number,
+                  body: previewLink,
                 });
               }
             });
