@@ -40,7 +40,7 @@ jobs:
       - name: Add preview link to pull request description
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.CUSTOM_TOKEN }}
+          github-token: ${{ secrets.CUSTOM_SECRETS }}
           script: |
             const previewLink = `Preview URL: ${{ steps.deploy_preview.outputs.url }}`;
             const { owner, repo } = context.repo;
