@@ -43,21 +43,11 @@ jobs:
           folder: build
         if: steps.check_pr.outputs.closed != 'true'
 
-      - name: Debug - Preview URL
-        run: |
-          echo "Preview URL: ${{ steps.deploy_preview.outputs.url }}"
-
-      - name: Debug - Pull Request Information
-        run: |
-          echo "Owner: ${{ github.repository_owner }}"
-          echo "Repository: ${{ github.repository }}"
-          echo "Pull Request Number: ${{ github.event.pull_request.number }}"
-
-      - name: Debug - List Comments
+      - name: Add preview link to pull request description
         uses: actions/github-script@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const previewLink = `Preview URL: ${{ steps.deploy_preview.outputs.url }}`;
             const { owner, repo } = context.repo;
             const { number } = context.payload.pull_request;
 
@@ -67,7 +57,7 @@ jobs:
             const options = {
               method: 'GET',
               headers: {
-                Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+                Authorization: `Bearer ${{ secrets.GITHUB_TOKEN }}`,
                 'Content-Type': 'application/json',
               },
             };
@@ -75,5 +65,37 @@ jobs:
             fetch(apiUrl, options)
               .then(response => response.json())
               .then(comments => {
-                console.log(comments);
+                if (Array.isArray(comments)) {
+                  const comment = comments.find(
+                    comment =>
+                      comment.user?.login === 'github-actions[bot]' &&
+                      comment.body?.includes('Preview URL:')
+                  );
+
+                  if (comment) {
+                    const updateUrl = `https://api.github.com/repos/${owner}/${repo}/issues/comments/${comment.id}`;
+                    const updateOptions = {
+                      method: 'PATCH',
+                      headers: {
+                        Authorization: `Bearer ${{ secrets.GITHUB_TOKEN }}`,
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ body: previewLink }),
+                    };
+
+                    fetch(updateUrl, updateOptions);
+                  } else {
+                    const createUrl = `https://api.github.com/repos/${owner}/${repo}/issues/${number}/comments`;
+                    const createOptions = {
+                      method: 'POST',
+                      headers: {
+                        Authorization: `Bearer ${{ secrets.GITHUB_TOKEN }}`,
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ body: previewLink }),
+                    };
+
+                    fetch(createUrl, createOptions);
+                  }
+                }
               });
