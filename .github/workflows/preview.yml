@@ -66,36 +66,39 @@ jobs:
             fetch(apiUrl, options)
               .then(response => response.json())
               .then(comments => {
-                const comment = comments.find(
-                  comment =>
-                    comment.user.login === 'github-actions[bot]' &&
-                    comment.body.includes('Preview URL:')
-                );
+                if (Array.isArray(comments)) {
+                  const comment = comments.find(
+                    comment =>
+                      comment.user?.login === 'github-actions[bot]' &&
+                      comment.body?.includes('Preview URL:')
+                  );
 
-                if (comment) {
-                  const updateUrl = `https://api.github.com/repos/${owner}/${repo}/issues/comments/${comment.id}`;
-                  const updateOptions = {
-                    method: 'PATCH',
-                    headers: {
-                      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ body: previewLink }),
-                  };
+                  if (comment) {
+                    const updateUrl = `https://api.github.com/repos/${owner}/${repo}/issues/comments/${comment.id}`;
+                    const updateOptions = {
+                      method: 'PATCH',
+                      headers: {
+                        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ body: previewLink }),
+                    };
 
-                  fetch(updateUrl, updateOptions);
-                } else {
-                  const createUrl = `https://api.github.com/repos/${owner}/${repo}/issues/${number}/comments`;
-                  const createOptions = {
-                    method: 'POST',
-                    headers: {
-                      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ body: previewLink }),
-                  };
+                    fetch(updateUrl, updateOptions);
+                  } else {
+                    const createUrl = `https://api.github.com/repos/${owner}/${repo}/issues/${number}/comments`;
+                    const createOptions = {
+                      method: 'POST',
+                      headers: {
+                        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ body: previewLink }),
+                    };
 
-                  fetch(createUrl, createOptions);
+                    fetch(createUrl, createOptions);
+                  }
                 }
               });
+
 
