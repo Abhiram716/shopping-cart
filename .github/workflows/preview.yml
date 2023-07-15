@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ../shopping-cart
+        working-directory: ./shopping-cart
 
     strategy:
       matrix:
