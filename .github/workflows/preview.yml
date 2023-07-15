@@ -44,9 +44,9 @@ jobs:
         if: steps.check_pr.outputs.closed != 'true'
 
       - name: Delay for deployment
-        uses: actions/wait-for@v2
-        with:
-          time: '10s'  # Adjust the delay as needed
+        run: |
+          echo "Waiting for deployment..."
+          sleep 10s  # Adjust the delay as needed
 
       - name: Add preview link to pull request description
         uses: actions/github-script@v5
